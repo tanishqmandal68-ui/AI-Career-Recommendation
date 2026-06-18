@@ -271,7 +271,13 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             setError("Puter.js not available");
             return;
         }
-        return puter.fs.write(path, data);
+        try {
+            return await puter.fs.write(path, data);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Failed to write file";
+            setError(msg);
+            throw err;
+        }
     };
 
     const readDir = async (path: string) => {
@@ -280,7 +286,13 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             setError("Puter.js not available");
             return;
         }
-        return puter.fs.readdir(path);
+        try {
+            return await puter.fs.readdir(path);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Failed to read directory";
+            setError(msg);
+            throw err;
+        }
     };
 
     const readFile = async (path: string) => {
@@ -289,7 +301,13 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             setError("Puter.js not available");
             return;
         }
-        return puter.fs.read(path);
+        try {
+            return await puter.fs.read(path);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Failed to read file";
+            setError(msg);
+            throw err;
+        }
     };
 
     const upload = async (files: File[] | Blob[]) => {
@@ -298,7 +316,13 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             setError("Puter.js not available");
             return;
         }
-        return puter.fs.upload(files);
+        try {
+            return await puter.fs.upload(files);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Failed to upload files";
+            setError(msg);
+            throw err;
+        }
     };
 
     const deleteFile = async (path: string) => {
@@ -307,7 +331,13 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             setError("Puter.js not available");
             return;
         }
-        return puter.fs.delete(path);
+        try {
+            return await puter.fs.delete(path);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Failed to delete file";
+            setError(msg);
+            throw err;
+        }
     };
 
     const chat = async (
@@ -321,10 +351,14 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             setError("Puter.js not available");
             return;
         }
-        // return puter.ai.chat(prompt, imageURL, testMode, options);
-        return puter.ai.chat(prompt, imageURL, testMode, options) as Promise<
-            AIResponse | undefined
-        >;
+        try {
+            return await puter.ai.chat(prompt, imageURL, testMode, options) as
+                AIResponse | undefined;
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "AI chat request failed";
+            setError(msg);
+            throw err;
+        }
     };
 
     const feedback = async (path: string, message: string) => {
@@ -334,24 +368,30 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             return;
         }
 
-        return puter.ai.chat(
-            [
-                {
-                    role: "user",
-                    content: [
-                        {
-                            type: "file",
-                            puter_path: path,
-                        },
-                        {
-                            type: "text",
-                            text: message,
-                        },
-                    ],
-                },
-            ],
-            { model: "gpt-4o" }
-        ) as Promise<AIResponse | undefined>;
+        try {
+            return await puter.ai.chat(
+                [
+                    {
+                        role: "user",
+                        content: [
+                            {
+                                type: "file",
+                                puter_path: path,
+                            },
+                            {
+                                type: "text",
+                                text: message,
+                            },
+                        ],
+                    },
+                ],
+                { model: "gpt-4o" }
+            ) as AIResponse | undefined;
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "AI feedback request failed";
+            setError(msg);
+            throw err;
+        }
     };
 
     const img2txt = async (image: string | File | Blob, testMode?: boolean) => {
@@ -360,7 +400,13 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             setError("Puter.js not available");
             return;
         }
-        return puter.ai.img2txt(image, testMode);
+        try {
+            return await puter.ai.img2txt(image, testMode);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Image-to-text request failed";
+            setError(msg);
+            throw err;
+        }
     };
 
     const getKV = async (key: string) => {
@@ -369,7 +415,13 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             setError("Puter.js not available");
             return;
         }
-        return puter.kv.get(key);
+        try {
+            return await puter.kv.get(key);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Failed to read from storage";
+            setError(msg);
+            throw err;
+        }
     };
 
     const setKV = async (key: string, value: string) => {
@@ -378,7 +430,13 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             setError("Puter.js not available");
             return;
         }
-        return puter.kv.set(key, value);
+        try {
+            return await puter.kv.set(key, value);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Failed to write to storage";
+            setError(msg);
+            throw err;
+        }
     };
 
     const deleteKV = async (key: string) => {
@@ -387,7 +445,13 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             setError("Puter.js not available");
             return;
         }
-        return puter.kv.del(key);
+        try {
+            return await puter.kv.del(key);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Failed to delete from storage";
+            setError(msg);
+            throw err;
+        }
     };
 
     const listKV = async (pattern: string, returnValues?: boolean) => {
@@ -399,7 +463,13 @@ export const usePuterStore = create<PuterStore>((set, get) => {
         if (returnValues === undefined) {
             returnValues = false;
         }
-        return puter.kv.list(pattern, returnValues);
+        try {
+            return await puter.kv.list(pattern, returnValues);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Failed to list storage keys";
+            setError(msg);
+            throw err;
+        }
     };
 
     const flushKV = async () => {
@@ -408,7 +478,13 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             setError("Puter.js not available");
             return;
         }
-        return puter.kv.flush();
+        try {
+            return await puter.kv.flush();
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : "Failed to flush storage";
+            setError(msg);
+            throw err;
+        }
     };
 
     return {

@@ -15,8 +15,13 @@ export function ResumesPage() {
 
   const handleDelete = (id: string, title: string) => {
     if (window.confirm(`Delete "${title}"? This cannot be undone.`)) {
-      deleteResume(id);
-      setTick((t) => t + 1);
+      try {
+        deleteResume(id);
+        setTick((t) => t + 1);
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : "Failed to delete resume.";
+        alert(msg);
+      }
     }
   };
 
