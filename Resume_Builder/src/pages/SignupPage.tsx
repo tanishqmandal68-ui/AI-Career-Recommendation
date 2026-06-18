@@ -15,10 +15,10 @@ export function SignupPage() {
     if (user) navigate("/resumes/new", { replace: true });
   }, [user, navigate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    const result = signup(name, email, password);
+    const result = await signup(name, email, password);
     if (result.ok) {
       navigate("/resumes/new", { replace: true });
     } else {

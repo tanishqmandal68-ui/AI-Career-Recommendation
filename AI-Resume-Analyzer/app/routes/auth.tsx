@@ -7,14 +7,25 @@ export const meta = () => ([
     { name: 'description', content: 'Log into your account' },
 ])
 
+function safeRedirect(raw: string | undefined): string {
+    if (!raw) return '/';
+    try {
+        const url = new URL(raw, window.location.origin);
+        if (url.origin !== window.location.origin) return '/';
+        return url.pathname + url.search + url.hash;
+    } catch {
+        return '/';
+    }
+}
+
 const Auth = () => {
     const { isLoading, auth } = usePuterStore();
     const location = useLocation();
-    const next = location.search.split('next=')[1];
+    const next = safeRedirect(new URLSearchParams(location.search).get('next') ?? undefined);
     const navigate = useNavigate();
 
     useEffect(() => {
-        if(auth.isAuthenticated) navigate(next || '/');
+        if(auth.isAuthenticated) navigate(next);
     }, [auth.isAuthenticated, next])
 
     return (
