@@ -4,6 +4,7 @@ import { Briefcase, GraduationCap } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { saveResume } from "../lib/resumeStorage";
 import { defaultResumeData, type ResumeMode } from "../types/resume";
+import { inputClass, errorClass, submitButtonClass } from "../lib/formStyles";
 
 export function CreateResumePage() {
   const { user } = useAuth();
@@ -44,7 +45,7 @@ export function CreateResumePage() {
 
       <form onSubmit={handleCreate} className="card-shadow mt-8 space-y-8 rounded-2xl border border-slate-100 bg-white p-8">
         {error && (
-          <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>
+          <p className={errorClass}>{error}</p>
         )}
 
         <label className="block">
@@ -56,7 +57,7 @@ export function CreateResumePage() {
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="mt-3 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
+            className={`mt-3 ${inputClass.replace('mt-1 ', '')}`}
             placeholder="My Resume"
           />
         </label>
@@ -106,7 +107,7 @@ export function CreateResumePage() {
 
         <button
           type="submit"
-          className="btn-primary w-full cursor-pointer rounded-xl py-3 text-sm font-semibold text-white"
+          className={submitButtonClass}
         >
           Continue to Resume Builder
         </button>

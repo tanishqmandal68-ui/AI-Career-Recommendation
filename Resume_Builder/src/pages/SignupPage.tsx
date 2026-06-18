@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { AuthLayout } from "../components/layout/AuthLayout";
+import { AuthFormField } from "../components/ui/AuthFormField";
+import { errorClass, submitButtonClass, authLinkClass } from "../lib/formStyles";
 
 export function SignupPage() {
   const { signup, user } = useAuth();
@@ -37,46 +39,32 @@ export function SignupPage() {
   return (
     <AuthLayout title="Create your account" subtitle="Start building resumes for free">
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>
-        )}
-        <label className="block">
-          <span className="text-xs font-semibold text-muted">Full Name</span>
-          <input
-            required
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
-            placeholder="Jane Doe"
-          />
-        </label>
-        <label className="block">
-          <span className="text-xs font-semibold text-muted">Email</span>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
-            placeholder="you@email.com"
-          />
-        </label>
-        <label className="block">
-          <span className="text-xs font-semibold text-muted">Password</span>
-          <input
-            type="password"
-            required
-            minLength={6}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
-            placeholder="At least 6 characters"
-          />
-        </label>
-        <button
-          type="submit"
-          className="btn-primary w-full cursor-pointer rounded-xl py-3 text-sm font-semibold text-white"
-        >
+        {error && <p className={errorClass}>{error}</p>}
+        <AuthFormField
+          label="Full Name"
+          required
+          value={name}
+          onChange={setName}
+          placeholder="Jane Doe"
+        />
+        <AuthFormField
+          label="Email"
+          type="email"
+          required
+          value={email}
+          onChange={setEmail}
+          placeholder="you@email.com"
+        />
+        <AuthFormField
+          label="Password"
+          type="password"
+          required
+          minLength={6}
+          value={password}
+          onChange={setPassword}
+          placeholder="At least 6 characters"
+        />
+        <button type="submit" className={submitButtonClass}>
           Sign up
         </button>
       </form>
@@ -85,7 +73,7 @@ export function SignupPage() {
         <button
           type="button"
           onClick={() => navigate("/login")}
-          className="cursor-pointer font-semibold text-brand-600 hover:underline"
+          className={authLinkClass}
         >
           Log in
         </button>

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { AuthLayout } from "../components/layout/AuthLayout";
+import { AuthFormField } from "../components/ui/AuthFormField";
+import { errorClass, submitButtonClass, authLinkClass } from "../lib/formStyles";
 
 export function LoginPage() {
   const { login, user } = useAuth();
@@ -39,35 +41,24 @@ export function LoginPage() {
   return (
     <AuthLayout title="Welcome back" subtitle="Log in to manage your resumes">
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <p className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">{error}</p>
-        )}
-        <label className="block">
-          <span className="text-xs font-semibold text-muted">Email</span>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
-            placeholder="you@email.com"
-          />
-        </label>
-        <label className="block">
-          <span className="text-xs font-semibold text-muted">Password</span>
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100"
-            placeholder="••••••••"
-          />
-        </label>
-        <button
-          type="submit"
-          className="btn-primary w-full cursor-pointer rounded-xl py-3 text-sm font-semibold text-white"
-        >
+        {error && <p className={errorClass}>{error}</p>}
+        <AuthFormField
+          label="Email"
+          type="email"
+          required
+          value={email}
+          onChange={setEmail}
+          placeholder="you@email.com"
+        />
+        <AuthFormField
+          label="Password"
+          type="password"
+          required
+          value={password}
+          onChange={setPassword}
+          placeholder="••••••••"
+        />
+        <button type="submit" className={submitButtonClass}>
           Log in
         </button>
       </form>
@@ -76,7 +67,7 @@ export function LoginPage() {
         <button
           type="button"
           onClick={() => navigate("/signup")}
-          className="cursor-pointer font-semibold text-brand-600 hover:underline"
+          className={authLinkClass}
         >
           Sign up
         </button>

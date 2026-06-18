@@ -1,10 +1,9 @@
 import ScoreGauge from "~/components/ScoreGauge";
 import ScoreBadge from "~/components/ScoreBadge";
+import { getScoreTier } from "~/lib/utils";
 
 const Category = ({ title, score }: { title: string, score: number }) => {
-    const textColor = score > 70 ? 'text-green-600'
-            : score > 49
-        ? 'text-yellow-600' : 'text-red-600';
+    const { textColor } = getScoreTier(score);
 
     return (
         <div className="resume-summary">

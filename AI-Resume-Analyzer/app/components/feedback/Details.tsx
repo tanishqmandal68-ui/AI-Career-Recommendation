@@ -1,4 +1,4 @@
-import { cn } from "~/lib/utils";
+import { cn, getScoreTier } from "~/lib/utils";
 import {
   Accordion,
   AccordionContent,
@@ -7,32 +7,17 @@ import {
 } from "../Accordion";
 
 const ScoreBadge = ({ score }: { score: number }) => {
+  const { bgColor, badgeTextClass, icon } = getScoreTier(score);
+
   return (
       <div
           className={cn(
               "flex flex-row gap-1 items-center px-2 py-0.5 rounded-[96px]",
-              score > 69
-                  ? "bg-badge-green"
-                  : score > 39
-                      ? "bg-badge-yellow"
-                      : "bg-badge-red"
+              bgColor
           )}
       >
-        <img
-            src={score > 69 ? "/icons/check.svg" : "/icons/warning.svg"}
-            alt="score"
-            className="size-4"
-        />
-        <p
-            className={cn(
-                "text-sm font-medium",
-                score > 69
-                    ? "text-badge-green-text"
-                    : score > 39
-                        ? "text-badge-yellow-text"
-                        : "text-badge-red-text"
-            )}
-        >
+        <img src={icon} alt="score" className="size-4" />
+        <p className={cn("text-sm font-medium", badgeTextClass)}>
           {score}/100
         </p>
       </div>
@@ -106,54 +91,27 @@ const CategoryContent = ({
   );
 };
 
+const FEEDBACK_CATEGORIES: { id: string; title: string; key: keyof Omit<Feedback, "overallScore" | "ATS"> }[] = [
+  { id: "tone-style", title: "Tone & Style", key: "toneAndStyle" },
+  { id: "content", title: "Content", key: "content" },
+  { id: "structure", title: "Structure", key: "structure" },
+  { id: "skills", title: "Skills", key: "skills" },
+];
+
 const Details = ({ feedback }: { feedback: Feedback }) => {
   return (
       <div className="flex flex-col gap-4 w-full">
         <Accordion>
-          <AccordionItem id="tone-style">
-            <AccordionHeader itemId="tone-style">
-              <CategoryHeader
-                  title="Tone & Style"
-                  categoryScore={feedback.toneAndStyle.score}
-              />
-            </AccordionHeader>
-            <AccordionContent itemId="tone-style">
-              <CategoryContent tips={feedback.toneAndStyle.tips} />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem id="content">
-            <AccordionHeader itemId="content">
-              <CategoryHeader
-                  title="Content"
-                  categoryScore={feedback.content.score}
-              />
-            </AccordionHeader>
-            <AccordionContent itemId="content">
-              <CategoryContent tips={feedback.content.tips} />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem id="structure">
-            <AccordionHeader itemId="structure">
-              <CategoryHeader
-                  title="Structure"
-                  categoryScore={feedback.structure.score}
-              />
-            </AccordionHeader>
-            <AccordionContent itemId="structure">
-              <CategoryContent tips={feedback.structure.tips} />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem id="skills">
-            <AccordionHeader itemId="skills">
-              <CategoryHeader
-                  title="Skills"
-                  categoryScore={feedback.skills.score}
-              />
-            </AccordionHeader>
-            <AccordionContent itemId="skills">
-              <CategoryContent tips={feedback.skills.tips} />
-            </AccordionContent>
-          </AccordionItem>
+          {FEEDBACK_CATEGORIES.map(({ id, title, key }) => (
+            <AccordionItem key={id} id={id}>
+              <AccordionHeader itemId={id}>
+                <CategoryHeader title={title} categoryScore={feedback[key].score} />
+              </AccordionHeader>
+              <AccordionContent itemId={id}>
+                <CategoryContent tips={feedback[key].tips} />
+              </AccordionContent>
+            </AccordionItem>
+          ))}
         </Accordion>
       </div>
   );
