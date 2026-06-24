@@ -84,3 +84,6 @@ data/processed/rag_index.joblib
 *.bak
 *.orig
 *.rej
+
+# Internal tooling
+docs/compose/
