@@ -223,5 +223,4 @@ Built with ❤️ using React Router, Django, FastAPI, and modern AI models.
 <div align="center">
 <b>CareerAI Ecosystem</b><br>
 <i>Build professional resumes, analyze ATS scores, and accelerate your career journey with AI.</i><br>
-Made by Shourya Kumar
 </div>
