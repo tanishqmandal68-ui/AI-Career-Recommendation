@@ -47,7 +47,11 @@ export function ResumeEditorProvider({
       data,
       updatedAt: new Date().toISOString(),
     };
-    saveResume(updated);
+    try {
+      saveResume(updated);
+    } catch (err) {
+      console.error("Failed to auto-save resume", err);
+    }
   }, [saved, data]);
 
   useEffect(() => {

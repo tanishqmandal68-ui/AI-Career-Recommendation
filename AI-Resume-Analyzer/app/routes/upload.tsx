@@ -86,7 +86,6 @@ const Upload = () => {
             }
             await kv.set(`resume:${uuid}`, JSON.stringify(data));
             setStatusText('Analysis complete, redirecting...');
-            console.log(data);
             navigate(`/resume/${uuid}`);
         } catch (error) {
             console.error(error);
@@ -107,7 +106,10 @@ const Upload = () => {
         const jobTitle = formData.get('job-title') as string;
         const jobDescription = formData.get('job-description') as string;
 
-        if(!file) return;
+        if(!file) {
+            alert('Please upload a resume PDF before submitting.');
+            return;
+        }
 
         handleAnalyze({ companyName, jobTitle, jobDescription, file });
     }

@@ -6,7 +6,8 @@ export function getAllResumes(): SavedResume[] {
   try {
     const raw = localStorage.getItem(RESUMES_KEY);
     return raw ? JSON.parse(raw) : [];
-  } catch {
+  } catch (err) {
+    console.error("Failed to parse saved resumes from localStorage", err);
     return [];
   }
 }
@@ -26,12 +27,22 @@ export function saveResume(resume: SavedResume): void {
   const idx = all.findIndex((r) => r.id === resume.id);
   if (idx >= 0) all[idx] = resume;
   else all.push(resume);
-  localStorage.setItem(RESUMES_KEY, JSON.stringify(all));
+  try {
+    localStorage.setItem(RESUMES_KEY, JSON.stringify(all));
+  } catch (err) {
+    console.error("Failed to save resume to localStorage", err);
+    throw new Error("Could not save resume. Storage may be full.");
+  }
 }
 
 export function deleteResume(id: string): void {
   const all = getAllResumes().filter((r) => r.id !== id);
-  localStorage.setItem(RESUMES_KEY, JSON.stringify(all));
+  try {
+    localStorage.setItem(RESUMES_KEY, JSON.stringify(all));
+  } catch (err) {
+    console.error("Failed to delete resume from localStorage", err);
+    throw new Error("Could not delete resume. Storage may be full.");
+  }
 }
 
 export function calcCompletion(data: ResumeData): number {

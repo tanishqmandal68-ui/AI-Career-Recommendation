@@ -16,6 +16,7 @@ const Resume = () => {
     const [imageUrl, setImageUrl] = useState('');
     const [resumeUrl, setResumeUrl] = useState('');
     const [feedback, setFeedback] = useState<Feedback | null>(null);
+    const [loadError, setLoadError] = useState<string | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,39 +25,49 @@ const Resume = () => {
 
     useEffect(() => {
         let isMounted = true;
+        const MAX_RETRIES = 60;
 
         const loadResume = async () => {
-            while (isMounted) {
+            let retries = 0;
+            while (isMounted && retries < MAX_RETRIES) {
                 try {
                     const resume = await kv.get(`resume:${id}`);
 
                     if (resume) {
-                        const data = JSON.parse(resume);
+                        let data: Record<string, unknown>;
+                        try {
+                            data = JSON.parse(resume);
+                        } catch {
+                            setLoadError("Resume data is corrupted.");
+                            return;
+                        }
 
-                        // If feedback is present, process it and stop polling
                         if (data.feedback) {
-                            const resumeBlob = await fs.read(data.resumePath);
+                            const resumeBlob = await fs.read(data.resumePath as string);
                             if (resumeBlob) {
                                 const pdfBlob = new Blob([resumeBlob], { type: 'application/pdf' });
                                 setResumeUrl(URL.createObjectURL(pdfBlob));
                             }
 
-                            const imageBlob = await fs.read(data.imagePath);
+                            const imageBlob = await fs.read(data.imagePath as string);
                             if (imageBlob) {
                                 setImageUrl(URL.createObjectURL(imageBlob));
                             }
 
-                            setFeedback(data.feedback);
-                            console.log({resumeUrl: data.resumePath, imageUrl: data.imagePath, feedback: data.feedback });
-                            break; // Successfully loaded, exit polling loop
+                            setFeedback(data.feedback as Feedback);
+                            return;
                         }
                     }
                 } catch (err) {
                     console.error("Error loading resume, will retry...", err);
                 }
 
-                // Wait 1 second before retrying (eventual consistency)
+                retries++;
                 await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            if (isMounted && retries >= MAX_RETRIES) {
+                setLoadError("Resume analysis is taking too long. Please refresh or try again later.");
             }
         }
 
@@ -89,7 +100,17 @@ const Resume = () => {
                 </section>
                 <section className="feedback-section">
                     <h2 className="text-4xl !text-black font-bold">Resume Review</h2>
-                    {feedback ? (
+                    {loadError ? (
+                        <div className="flex flex-col items-center gap-4 p-8 text-center">
+                            <p className="text-red-600 font-semibold">{loadError}</p>
+                            <button
+                                className="primary-button w-fit"
+                                onClick={() => window.location.reload()}
+                            >
+                                Retry
+                            </button>
+                        </div>
+                    ) : feedback ? (
                         <div className="flex flex-col gap-8 animate-in fade-in duration-1000">
                             <Summary feedback={feedback} />
                             <ATS score={feedback.ATS.score || 0} suggestions={feedback.ATS.tips || []} />

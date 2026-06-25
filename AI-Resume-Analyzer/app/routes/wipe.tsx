@@ -8,8 +8,13 @@ const WipeApp = () => {
     const [files, setFiles] = useState<FSItem[]>([]);
 
     const loadFiles = async () => {
-        const files = (await fs.readDir("./")) as FSItem[];
-        setFiles(files);
+        try {
+            const files = (await fs.readDir("./")) as FSItem[];
+            setFiles(files ?? []);
+        } catch (error) {
+            console.error("Failed to load files", error);
+            setFiles([]);
+        }
     };
 
     useEffect(() => {
@@ -23,11 +28,14 @@ const WipeApp = () => {
     }, [isLoading]);
 
     const handleDelete = async () => {
-        files.forEach(async (file) => {
-            await fs.delete(file.path);
-        });
-        await kv.flush();
-        loadFiles();
+        try {
+            await Promise.all(files.map((file) => fs.delete(file.path)));
+            await kv.flush();
+        } catch (error) {
+            console.error("Failed to wipe app data", error);
+            alert("Some data could not be deleted. Please try again.");
+        }
+        await loadFiles();
     };
 
     if (isLoading) {

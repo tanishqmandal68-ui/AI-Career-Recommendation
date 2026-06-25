@@ -25,14 +25,20 @@ export function CreateResumePage() {
     data.fullName = user.name;
     data.email = user.email;
 
-    saveResume({
-      id,
-      userId: user.id,
-      title: title.trim(),
-      mode,
-      data,
-      updatedAt: new Date().toISOString(),
-    });
+    try {
+      saveResume({
+        id,
+        userId: user.id,
+        title: title.trim(),
+        mode,
+        data,
+        updatedAt: new Date().toISOString(),
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to create resume.";
+      setError(msg);
+      return;
+    }
 
     navigate(`/resumes/${id}/edit`);
   };
