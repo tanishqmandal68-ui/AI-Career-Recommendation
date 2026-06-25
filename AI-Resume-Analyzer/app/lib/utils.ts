@@ -19,3 +19,49 @@ export function formatSize(bytes: number): string {
 }
 
 export const generateUUID = () => crypto.randomUUID();
+
+export type ScoreTier = "good" | "average" | "poor";
+
+export interface ScoreTierInfo {
+  tier: ScoreTier;
+  label: string;
+  textColor: string;
+  bgColor: string;
+  badgeTextClass: string;
+  icon: "/icons/check.svg" | "/icons/warning.svg";
+  atsIcon: string;
+}
+
+export function getScoreTier(score: number): ScoreTierInfo {
+  if (score > 69) {
+    return {
+      tier: "good",
+      label: "Strong",
+      textColor: "text-green-600",
+      bgColor: "bg-badge-green",
+      badgeTextClass: "text-badge-green-text",
+      icon: "/icons/check.svg",
+      atsIcon: "/icons/ats-good.svg",
+    };
+  }
+  if (score > 49) {
+    return {
+      tier: "average",
+      label: "Good Start",
+      textColor: "text-yellow-600",
+      bgColor: "bg-badge-yellow",
+      badgeTextClass: "text-badge-yellow-text",
+      icon: "/icons/warning.svg",
+      atsIcon: "/icons/ats-warning.svg",
+    };
+  }
+  return {
+    tier: "poor",
+    label: "Needs Work",
+    textColor: "text-red-600",
+    bgColor: "bg-badge-red",
+    badgeTextClass: "text-badge-red-text",
+    icon: "/icons/warning.svg",
+    atsIcon: "/icons/ats-bad.svg",
+  };
+}

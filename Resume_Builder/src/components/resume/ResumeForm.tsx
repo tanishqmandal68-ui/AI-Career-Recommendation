@@ -6,11 +6,10 @@ import {
   type Education,
   type Experience,
 } from "../../types/resume";
+import { labelClass } from "../../lib/formStyles";
 
 const inputClass =
   "mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm text-ink transition focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-brand-100";
-
-const labelClass = "text-xs font-semibold text-muted";
 
 type Step = "contact" | "summary" | "experience" | "education" | "skills";
 

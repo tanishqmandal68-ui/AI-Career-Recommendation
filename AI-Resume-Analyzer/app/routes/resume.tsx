@@ -1,6 +1,7 @@
-import {Link, useNavigate, useParams} from "react-router";
+import {Link, useParams} from "react-router";
 import {useEffect, useState} from "react";
 import {usePuterStore} from "~/lib/puter";
+import {useRequireAuth} from "~/lib/useRequireAuth";
 import Summary from "../components/feedback/Summary";
 import ATS from "../components/feedback/ATS";
 import Details from "../components/feedback/Details";
@@ -11,16 +12,12 @@ export const meta = () => ([
 ])
 
 const Resume = () => {
-    const { auth, isLoading, fs, kv } = usePuterStore();
+    useRequireAuth();
+    const { fs, kv } = usePuterStore();
     const { id } = useParams();
     const [imageUrl, setImageUrl] = useState('');
     const [resumeUrl, setResumeUrl] = useState('');
     const [feedback, setFeedback] = useState<Feedback | null>(null);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if(!isLoading && !auth.isAuthenticated) navigate(`/auth?next=/resume/${id}`);
-    }, [isLoading])
 
     useEffect(() => {
         let isMounted = true;

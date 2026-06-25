@@ -1,4 +1,5 @@
 import React from 'react'
+import { getScoreTier } from '~/lib/utils'
 
 interface Suggestion {
   type: "good" | "improve";
@@ -10,27 +11,14 @@ interface ATSProps {
   suggestions: Suggestion[];
 }
 
+const gradientMap = { good: "from-green-100", average: "from-yellow-100", poor: "from-red-100" } as const;
+const subtitleMap = { good: "Great Job!", average: "Good Start", poor: "Needs Improvement" } as const;
+
 const ATS: React.FC<ATSProps> = ({ score, suggestions }) => {
-  // Determine background gradient based on score
-  const gradientClass = score > 69
-    ? 'from-green-100'
-    : score > 49
-      ? 'from-yellow-100'
-      : 'from-red-100';
-
-  // Determine icon based on score
-  const iconSrc = score > 69
-    ? '/icons/ats-good.svg'
-    : score > 49
-      ? '/icons/ats-warning.svg'
-      : '/icons/ats-bad.svg';
-
-  // Determine subtitle based on score
-  const subtitle = score > 69
-    ? 'Great Job!'
-    : score > 49
-      ? 'Good Start'
-      : 'Needs Improvement';
+  const tierInfo = getScoreTier(score);
+  const gradientClass = gradientMap[tierInfo.tier];
+  const iconSrc = tierInfo.atsIcon;
+  const subtitle = subtitleMap[tierInfo.tier];
 
   return (
     <div className={`bg-gradient-to-b ${gradientClass} to-white rounded-2xl shadow-md w-full p-6`}>
