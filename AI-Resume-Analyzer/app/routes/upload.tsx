@@ -1,4 +1,4 @@
-import {type FormEvent, useState} from 'react'
+import {type FormEvent, useEffect, useState} from 'react'
 import Navbar from "~/components/Navbar";
 import FileUploader from "~/components/FileUploader";
 import {usePuterStore} from "~/lib/puter";
@@ -13,6 +13,10 @@ const Upload = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [statusText, setStatusText] = useState('');
     const [file, setFile] = useState<File | null>(null);
+
+    useEffect(() => {
+        if(!isLoading && !auth.isAuthenticated) navigate('/auth?next=/upload');
+    }, [isLoading, auth.isAuthenticated]);
 
     const handleFileSelect = (file: File | null) => {
         setFile(file)
@@ -80,17 +84,14 @@ const Upload = () => {
 
             try {
                 data.feedback = JSON.parse(parsedText);
-            } catch (e) {
-                console.error("Failed to parse AI response JSON:", parsedText);
+            } catch {
                 throw new Error("Failed to parse resume analysis. Please try again.");
             }
             await kv.set(`resume:${uuid}`, JSON.stringify(data));
             setStatusText('Analysis complete, redirecting...');
-            console.log(data);
             navigate(`/resume/${uuid}`);
         } catch (error) {
-            console.error(error);
-            const errMsg = error instanceof Error ? error.message : (typeof error === 'string' ? error : JSON.stringify(error));
+            const errMsg = error instanceof Error ? error.message : 'An unexpected error occurred.';
             setStatusText(`Error: ${errMsg}`);
             alert(`Analysis failed: ${errMsg}`);
             setIsProcessing(false);
@@ -131,15 +132,15 @@ const Upload = () => {
                         <form id="upload-form" onSubmit={handleSubmit} className="flex flex-col gap-4 mt-8">
                             <div className="form-div">
                                 <label htmlFor="company-name">Company Name</label>
-                                <input type="text" name="company-name" placeholder="Company Name" id="company-name" />
+                                <input type="text" name="company-name" placeholder="Company Name" id="company-name" required maxLength={200} />
                             </div>
                             <div className="form-div">
                                 <label htmlFor="job-title">Job Title</label>
-                                <input type="text" name="job-title" placeholder="Job Title" id="job-title" />
+                                <input type="text" name="job-title" placeholder="Job Title" id="job-title" required maxLength={200} />
                             </div>
                             <div className="form-div">
                                 <label htmlFor="job-description">Job Description</label>
-                                <textarea rows={5} name="job-description" placeholder="Job Description" id="job-description" />
+                                <textarea rows={5} name="job-description" placeholder="Job Description" id="job-description" required maxLength={5000} />
                             </div>
 
                             <div className="form-div">

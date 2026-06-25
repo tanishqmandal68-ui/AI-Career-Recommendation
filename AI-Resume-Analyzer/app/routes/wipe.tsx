@@ -23,9 +23,14 @@ const WipeApp = () => {
     }, [isLoading]);
 
     const handleDelete = async () => {
-        files.forEach(async (file) => {
+        const confirmed = window.confirm(
+            "This will permanently delete ALL your files and data. This action cannot be undone. Are you sure?"
+        );
+        if (!confirmed) return;
+
+        for (const file of files) {
             await fs.delete(file.path);
-        });
+        }
         await kv.flush();
         loadFiles();
     };

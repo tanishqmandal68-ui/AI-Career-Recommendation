@@ -50,8 +50,7 @@ export default function Home() {
       if (resumeToDelete) {
           try {
               await kv.delete(`resume:${id}`);
-          } catch (error) {
-              console.error("Failed to delete resume from db", error);
+          } catch {
               alert("Failed to delete the resume. Please try again.");
               return;
           }
@@ -59,8 +58,8 @@ export default function Home() {
           try {
               if (resumeToDelete.resumePath) await fs.delete(resumeToDelete.resumePath);
               if (resumeToDelete.imagePath) await fs.delete(resumeToDelete.imagePath);
-          } catch (error) {
-              console.warn("Could not delete associated files from fs", error);
+          } catch {
+              // File cleanup is best-effort
           }
           
           setResumes(prev => prev.filter(r => r.id !== id));

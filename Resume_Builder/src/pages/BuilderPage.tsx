@@ -48,8 +48,7 @@ function BuilderContent() {
         .replace(/\s+/g, "_")
         .toLowerCase() || "resume";
       exportResumeDataToPdf(data, mode, `${safe}.pdf`);
-    } catch (err) {
-      console.error(err);
+    } catch {
       setExportError("Could not export PDF. Please try again.");
     } finally {
       setExporting(false);

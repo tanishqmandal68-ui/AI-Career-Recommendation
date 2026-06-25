@@ -47,12 +47,11 @@ const Resume = () => {
                             }
 
                             setFeedback(data.feedback);
-                            console.log({resumeUrl: data.resumePath, imageUrl: data.imagePath, feedback: data.feedback });
-                            break; // Successfully loaded, exit polling loop
+                            break;
                         }
                     }
-                } catch (err) {
-                    console.error("Error loading resume, will retry...", err);
+                } catch {
+                    // Retry on transient errors (eventual consistency)
                 }
 
                 // Wait 1 second before retrying (eventual consistency)

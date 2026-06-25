@@ -17,10 +17,10 @@ export function LoginPage() {
     if (user) navigate(from, { replace: true });
   }, [user, navigate, from]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    const result = login(email, password);
+    const result = await login(email, password);
     if (result.ok) {
       navigate(from, { replace: true });
     } else {
